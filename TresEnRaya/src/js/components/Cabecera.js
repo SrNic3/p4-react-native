@@ -15,8 +15,7 @@ var Cabecera = React.createClass({
 const styles = StyleSheet.create({
 cabecera: {
 padding: 5,
-fontSize: 25,
-marginBottom: 20
+fontSize: 20
 }
 });
 

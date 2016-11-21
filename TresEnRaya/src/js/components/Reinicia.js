@@ -22,16 +22,16 @@ let Reinicia = React.createClass({
 const styles = StyleSheet.create({
 
 reiniciaStyle: {
-	flex:0,
-	height:60,
-	marginTop:10,
+flex:0,
+height:40,
+marginTop:10,
 padding: 10,
 alignItems: "center",
 borderWidth: 1,
 borderColor: "black"
 },
 reiniciaStyleText: {
-fontSize: 30
+fontSize: 20
 }
 });
 
