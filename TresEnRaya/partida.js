@@ -21,6 +21,7 @@ return (
  <Tablero valores={state.valores}
  manejadorTableroClick={this.props.appClick}/>
  <Reinicia manejadorReiniciaClick={this.props.reiniciaClick}/>
+ <MyButton onPress={this.props.onBack} text={"Volver al inicio"}/>
  </View>
 )
 }
