@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { View } from 'react-native';
 import MyButton from './src/js/components/MyButton';
 import Reinicia from './src/js/components/Reinicia';
+import PlayList from './src/js/components/playList';
 
 
 // var TresEnRayaStore = require('./src/js/stores/TresEnRayaStore');
@@ -22,6 +23,7 @@ return (
  manejadorTableroClick={this.props.appClick}/>
  <Reinicia manejadorReiniciaClick={this.props.reiniciaClick}/>
  <MyButton onPress={this.props.onBack} text={"Volver al inicio"}/>
+ <PlayList state={state}/> 
  </View>
 )
 }

@@ -4,8 +4,8 @@ const JUGADORX = "jugador 1 - las X";
 const JUGADOR0 = "jugador 2 - los 0";
 const VALORES = [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']];
 
-import React, { Component } from 'react';
-import { Navigator, View } from 'react-native';
+import React, { Component  } from 'react';
+import { Navigator, View, AsyncStorage  } from 'react-native';
 const Cabecera = require('./Cabecera');
 const Tablero = require('./Tablero');
 
@@ -18,7 +18,8 @@ var App = React.createClass({
  turno: JUGADORX,
  valores: VALORES,
  terminado: false,
- nTurnos: 0
+ nTurnos: 0,
+ historial: ["Inicio de partida"]
  };
  },
 
@@ -34,7 +35,7 @@ if(!this.state.terminado){
  valores: this.state.valores,
  nTurnos: this.state.nTurnos + 1
  });
-
+ 	this.state.historial.push(this.state.turno+": ["+numeroFila+" - "+numberoColumna+"]");
  }
  },
 
@@ -46,7 +47,8 @@ reiniciaClick: function() {
 		turno: JUGADORX,
 		 valores: [['-', '-', '-'], ['-', '-', '-'], ['-', '-', '-']],
 		 terminado: false,
-		 nTurnos: 0
+		 nTurnos: 0,
+		 historial: ["Inicio de la partida"]
  });
 
 
@@ -106,6 +108,64 @@ componentDidUpdate: function(prevProps, prevState) {
  		  this.checkWin(valores);
  },
 
+ persistGame: function(){
+ 		  console.log("guardandoooo");
+
+	try {
+  		AsyncStorage.setItem('@MisDatos:key_tablero_0', this.state.valores[0].toString());
+  		AsyncStorage.setItem('@MisDatos:key_tablero_1', this.state.valores[1].toString());
+  		AsyncStorage.setItem('@MisDatos:key_tablero_2', this.state.valores[2].toString());
+  		AsyncStorage.setItem('@MisDatos:key_historial', this.state.historial.toString());
+  		AsyncStorage.setItem('@MisDatos:key_turno', this.state.turno.toString());
+	} catch (error) {
+	  console.log(error);
+	}
+ },
+
+ retrieveGame: async function(){
+ 	try {
+
+ 		var load_historial = await AsyncStorage.getItem('@MisDatos:key_historial');
+  		load_historial = load_historial.split(",");
+  		console.log(load_historial);
+
+  		var load_tablero_0 = await AsyncStorage.getItem('@MisDatos:key_tablero_0');
+  		var load_tablero_1 = await AsyncStorage.getItem('@MisDatos:key_tablero_1');
+  		var load_tablero_2 = await AsyncStorage.getItem('@MisDatos:key_tablero_2');
+
+  		load_tablero_0= load_tablero_0.split(",");
+  		load_tablero_1= load_tablero_1.split(",");
+  		load_tablero_2= load_tablero_2.split(",");
+
+  		var load_tablero = [load_tablero_0,load_tablero_1, load_tablero_2];
+
+  		var numTurnos =  load_historial.length - 1;
+  		var lastPlayer = await AsyncStorage.getItem('@MisDatos:key_turno');
+  		
+
+  		console.log(load_tablero_0);
+  		console.log(load_tablero_1);
+  		console.log(load_tablero_2);
+  		console.log(load_tablero);
+  		
+
+  	if (load_tablero != null && load_historial !=null){
+
+    	this.setState({
+				valores: load_tablero,
+				historial: load_historial,
+				nTurnos: numTurnos,
+				turno: lastPlayer
+
+			});	
+  	}
+	} catch (error) {
+  	// Error retrieving data
+  	 console.log(error);
+
+	}
+ },
+
 
  render: function () {
  var texto = "Turno del " + this.state.turno;
@@ -133,7 +193,7 @@ return (
 			}
 			switch(route.index){
 			case 0:
-			return <IndexScene onForward={onForward} onBack={onBack} />
+			return <IndexScene onForward={onForward} onBack={onBack} save={this.persistGame} load={this.retrieveGame} />
 			case 1:
 			return <PartidaScene onForward={onForward} onBack={onBack} state={this.state} 
 			appClick={this.appClick} reiniciaClick={this.reiniciaClick}/>
